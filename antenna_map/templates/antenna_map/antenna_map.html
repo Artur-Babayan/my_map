@@ -1,0 +1,40 @@
+{% extends 'antenna_map/base.html' %}
+
+{% block content %}
+  <div id="map" style="height: 500px;"></div>
+
+  <script>
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: new google.maps.LatLng(40.177200, 44.503490)
+      });
+
+      var markers = [];
+
+      {% for antenna in antennas %}
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng({{ antenna.latitude }}, {{ antenna.longitude }}),
+          map: map,
+          title: '{{ antenna.name }}'
+        });
+
+        var contentString = '<div><p><b>Name:</b> {{ antenna.name }}</p><p><b>Configuration:</b> {{ antenna.configuration }}</p><p><b>Latitude:</b> {{ antenna.latitude }}</p><p><b>Longitude:</b> {{ antenna.longitude }}</p></div>';
+
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+
+        markers.push(marker);
+      {% endfor %}
+    }
+  </script>
+
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlBKWSM0L3j5oZN5Wx1NYX6AwNxmzBqGY&callback=initMap">
+  </script>
+{% endblock %}
